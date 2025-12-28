@@ -1,0 +1,147 @@
+swagger: "2.0"
+
+info:
+  title: Members API
+  description: API for managing members and authentication
+  version: "1.0.0"
+
+host: 127.0.0.1:5000
+basePath: /
+schemes:
+  - http
+
+consumes:
+  - application/json
+produces:
+  - application/json
+
+
+# Security Definitions
+securityDefinitions:
+  bearerAuth:
+    type: apiKey
+    name: Authorization
+    in: header
+    description: "JWT Authorization header using the Bearer scheme. Example: 'Bearer <token>'"
+
+
+# Paths / Endpoints
+paths:
+
+  /members/:
+    post:
+      tags:
+        - Members
+      summary: Create a new member
+      description: Creates a new member account using the provided information.
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/CreateMemberPayload"
+      responses:
+        201:
+          description: Member successfully created
+          schema:
+            $ref: "#/definitions/CreateMemberResponse"
+          examples:
+            application/json:
+              id: 1
+              name: John Doe
+              email: john@email.com
+              dob: 1990-01-01
+        400:
+          description: Missing required fields
+
+  /members/login:
+    post:
+      tags:
+        - Members
+      summary: Login member
+      description: Authenticates a member and returns a JWT token.
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: "#/definitions/LoginCredentials"
+      responses:
+        200:
+          description: Login successful
+          schema:
+            $ref: "#/definitions/LoginResponse"
+          examples:
+            application/json:
+              status: success
+              token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        401:
+          description: Invalid credentials
+        400:
+          description: Missing credentials
+
+
+# Definitions
+definitions:
+
+  LoginCredentials:
+    type: object
+    required:
+      - email
+      - password
+    properties:
+      email:
+        type: string
+        example: test@email.com
+      password:
+        type: string
+        example: test
+
+  LoginResponse:
+    type: object
+    properties:
+      status:
+        type: string
+        example: success
+      token:
+        type: string
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+  CreateMemberPayload:
+    type: object
+    required:
+      - name
+      - email
+      - DOB
+      - password
+    properties:
+      name:
+        type: string
+        example: John Doe
+      email:
+        type: string
+        example: john@email.com
+      DOB:
+        type: string
+        format: date
+        example: 1990-01-01
+      password:
+        type: string
+        example: test
+
+  CreateMemberResponse:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1
+      name:
+        type: string
+        example: John Doe
+      email:
+        type: string
+        example: john@email.com
+      dob:
+        type: string
+        format: date
+        example: 1990-01-01

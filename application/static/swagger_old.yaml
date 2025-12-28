@@ -1,0 +1,209 @@
+swagger: "2.0"
+info:
+  title: "Members API"
+  description: "API for managing members and authentication"
+  version: "1.0.0"
+
+host: "127.0.0.1:5000"
+schemes:
+  - http
+
+consumes:
+  - application/json
+produces:
+  - application/json
+
+
+#security definitions
+securityDefinitions:
+  bearerAuth:
+    type: apiKey
+    name: Authorization
+    in: header
+    description: "JWT Authorization header using the Bearer scheme. Example: 'Bearer {token}'"
+
+
+#login
+definitions:
+  LoginCredentials:
+    type: object
+    required:
+      - email
+      - password
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+
+  LoginResponse:
+    type: object
+    properties:
+      token:
+        type: string
+
+
+#create member
+  CreateMemberPayload:
+    type: object
+    required:
+      - name
+      - email
+      - dob
+      - password
+    properties:
+      name:
+        type: string
+      email:
+        type: string
+      dob:
+        type: string
+        format: date
+      password:
+        type: string
+
+  CreateMemberResponse:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      email:
+        type: string
+      dob:
+        type: string
+        format: date
+
+
+#get all member
+  AllMembers:
+    type: array
+    items:
+      $ref: "#/definitions/CreateMemberResponse"
+
+
+#update member
+  UpdateMemberPayload:
+    type: object
+    required:
+      - id
+      - name
+      - email
+      - dob
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      email:
+        type: string
+      dob:
+        type: string
+        format: date
+
+  UpdateMemberResponse:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      email:
+        type: string
+      dob:
+        type: string
+        format: date
+
+
+#delete member
+  DeleteMemberResponse:
+    type: object
+    properties:
+      message:
+        type: string
+
+
+#login route
+paths:
+  /login:
+    post:
+      summary: "Login user"
+      description: "Authenticates a user and returns a JWT token"
+      parameters:
+        - in: body
+          name: credentials
+          required: true
+          schema:
+            $ref: "#/definitions/LoginCredentials"
+      responses:
+        200:
+          description: "Successful login"
+          schema:
+            $ref: "#/definitions/LoginResponse"
+
+
+#create member
+  /members:
+    post:
+      summary: "Create a member"
+      description: "Creates a new member"
+      parameters:
+        - in: body
+          name: member
+          required: true
+          schema:
+            $ref: "#/definitions/CreateMemberPayload"
+      responses:
+        201:
+          description: "Member created"
+          schema:
+            $ref: "#/definitions/CreateMemberResponse"
+
+
+#get all members
+    get:
+      summary: "Get all members"
+      description: "Returns a list of all members"
+      responses:
+        200:
+          description: "List of members"
+          schema:
+            $ref: "#/definitions/AllMembers"
+
+
+#update member
+    put:
+      summary: "Update a member"
+      description: "Updates an existing member"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: body
+          name: member
+          required: true
+          schema:
+            $ref: "#/definitions/UpdateMemberPayload"
+      responses:
+        200:
+          description: "Member updated"
+          schema:
+            $ref: "#/definitions/UpdateMemberResponse"
+
+
+#delete member
+    delete:
+      summary: "Delete a member"
+      description: "Deletes a member by ID"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: id
+          type: integer
+          required: true
+      responses:
+        200:
+          description: "Member deleted"
+          schema:
+            $ref: "#/definitions/DeleteMemberResponse"
