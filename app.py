@@ -1,7 +1,8 @@
 from flask import Flask
 from application.extensions import db, ma, jwt
+from application.blueprints.math.routes import math_bp
+from application.blueprints.members.routes import members_bp
 from config import config
-
 
 def create_app(config_name):
     app = Flask(__name__)
@@ -11,16 +12,7 @@ def create_app(config_name):
     ma.init_app(app)
     jwt.init_app(app)
 
-    # Only load Swagger when NOT testing
-    if not app.config.get("TESTING"):
-        from flask_swagger_ui import get_swaggerui_blueprint
-
-        swaggerui_blueprint = get_swaggerui_blueprint(
-            "/swagger",
-            "/static/swagger.yaml",
-            config={"app_name": "My API"}
-        )
-
-        app.register_blueprint(swaggerui_blueprint, url_prefix="/swagger")
+    app.register_blueprint(math_bp)
+    app.register_blueprint(members_bp)
 
     return app
