@@ -1,11 +1,12 @@
 import unittest
-import app
+from app import create_app
 
 
 class TestMathAPI(unittest.TestCase):
 
     def setUp(self):
-        self.client = app.app.test_client()
+        self.app = create_app()
+        self.client = self.app.test_client()
 
     def test_sum(self):
         payload = {"num1": 2, "num2": 3}
