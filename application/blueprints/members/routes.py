@@ -1,16 +1,14 @@
 from flask import Blueprint, request, jsonify
 from datetime import datetime
 
+members_bp = Blueprint("members", __name__, url_prefix="/members")
+
+# Safe imports AFTER blueprint exists
 from application.models import Member
 from application.extensions import db
 from application.utils.auth import encode_token
 
 
-# ✅ DEFINE THE BLUEPRINT
-members_bp = Blueprint("members", __name__, url_prefix="/members")
-
-
-# ---------- CREATE MEMBER ----------
 @members_bp.route("/", methods=["POST"])
 def create_member():
     data = request.get_json()
@@ -21,12 +19,11 @@ def create_member():
             return jsonify({field: ["Missing data for required field."]}), 400
 
     member = Member(
-    name=data["name"],
-    email=data["email"],
-    DOB=datetime.strptime(data["DOB"], "%Y-%m-%d").date(),
-    password=data["password"]
-)
-
+        name=data["name"],
+        email=data["email"],
+        DOB=datetime.strptime(data["DOB"], "%Y-%m-%d").date(),
+        password=data["password"]
+    )
 
     db.session.add(member)
     db.session.commit()
@@ -38,7 +35,6 @@ def create_member():
     }), 201
 
 
-# ---------- LOGIN MEMBER ----------
 @members_bp.route("/login", methods=["POST"])
 def login_member():
     data = request.get_json()
@@ -57,4 +53,3 @@ def login_member():
         "status": "success",
         "token": token
     }), 200
-

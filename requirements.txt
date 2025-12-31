@@ -1,0 +1,8 @@
+Flask==3.0.3
+flasgger
+Flask-SQLAlchemy
+Flask-Marshmallow
+marshmallow-sqlalchemy
+Flask-JWT-Extended
+Flask-Caching
+Flask-Limiter
