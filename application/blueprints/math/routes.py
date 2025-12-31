@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 
-math_bp = Blueprint("math", __name__, url_prefix="/math")
+math_bp = Blueprint("math", __name__)
 
 @math_bp.route("/sum", methods=["POST"])
 def sum_numbers():
